@@ -79,8 +79,6 @@ stages:
     pool:
       vmImage: 'ubuntu-22.04'
     environment: spike
-    variables:
-    - group: Release
     strategy:
       runOnce:
         deploy:
@@ -103,8 +101,7 @@ stages:
               appType: functionAppLinux
               appName: 'tailspin-space-game-leaderboard-28148'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.LeaderboardFunction.zip'
-              runtimeStack: DOCKER|microsoft/azure-functions-dotnet:8
-              startUpCommand: 'func azure functionapp publish $(functionAppName) --no-bundler'
+              runtimeStack: DOTNET|8
 
           - task: AzureAppServiceSettings@1
             displayName: 'Update web app settings'
@@ -116,7 +113,7 @@ stages:
                 [
                   {
                     "name": "AppSettings__LeaderboardFunctionUrl",
-                    "value": "http://tailspin-space-game-leaderboard-28148.azurewebsites.net/api/LeaderboardFunction",
+                    "value": "https://tailspin-space-game-leaderboard-28148.azurewebsites.net/api/LeaderboardFunction",
                     "slotSetting": false
                   }
                 ]
