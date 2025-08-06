@@ -25,6 +25,11 @@ stages:
       inputs:
         version: '$(dotnetSdkVersion)'
 
+    - task: UseDotNet@2
+      displayName: 'Install .NET 6 SDK (for Azure Functions tooling)'
+      inputs:
+        version: '6.0.x'
+
     - script: |
         npm uninstall node-sass
         npm install
@@ -82,6 +87,7 @@ stages:
           steps:
           - download: current
             artifact: drop
+
           - task: AzureWebApp@1
             displayName: 'Azure App Service Deploy: website'
             inputs:
@@ -89,6 +95,7 @@ stages:
               appName: '$(WebAppName)'
               appType: webAppLinux
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.Web.zip'
+
           - task: AzureFunctionApp@1
             displayName: 'Azure Function Deploy: leaderboard'
             inputs:
@@ -98,6 +105,7 @@ stages:
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/Tailspin.SpaceGame.LeaderboardFunction.zip'
               runtimeStack: DOCKER|microsoft/azure-functions-dotnet:8
               startUpCommand: 'func azure functionapp publish $(functionAppName) --no-bundler'
+
           - task: AzureAppServiceSettings@1
             displayName: 'Update web app settings'
             inputs:
